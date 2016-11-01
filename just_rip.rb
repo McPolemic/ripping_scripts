@@ -1,0 +1,97 @@
+#!/usr/bin/env ruby2.0
+require "logger"
+require "optparse"
+require "rakemkv"
+
+# Rips a DVD/Blu-Ray. Returns when done. No muss. No fuss.
+OUTPUT_DIR = '/home/adam/Videos/'
+machine = ARGV[1]
+MACHINES = ["linux2.local", "linux3.local", "puck.local"]
+
+STDOUT.sync = true
+logger = Logger.new(STDOUT)
+
+# Utility functions
+def find_newest_file(directory)
+  Dir.glob("#{directory}/*").max_by {|f| File.mtime(f)}
+end
+
+class TranscodesLongestTitle
+  def initialize(disc_device: "/dev/sr0", title_id: nil)
+    @disc_device = disc_device
+    @title_id = title_id
+  end
+
+  def perform()
+    disc = RakeMKV::Disc.new(@disc_device)
+    titles = disc.titles
+
+    if @title_id
+      disc.transcode!(title_id: @title_id)
+    else
+      disc.transcode!(title_id: titles.longest.id)
+    end
+
+    return find_newest_file(DIRECTORY_NAME)
+  end
+end
+
+options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: ruby2.0 just_rip.rb [options]"
+
+  options[:disc] = "/dev/sr0"
+  opts.on("-d", "--disc /dev/sr0", "Set the disc device") do |disc|
+    options[:disc] = disc
+  end
+
+  options[:title] = nil
+  opts.on("-t", "--title TITLE", "Set the title of the movie") do |title|
+    options[:title] = title
+  end
+
+  options[:title_id] = nil
+  opts.on("-i", "--index NUM", "Rip the specified title ID") do |num|
+    options[:title_id] = num
+  end
+
+  options[:host] = nil
+  opts.on("-m", "--machine MACHINE", "Send the rip to the target machine") do |host|
+    options[:host] = host
+  end
+
+  opts.on( '-h', '--help', 'Display this screen' ) do
+    puts opts
+    exit
+  end
+end
+
+optparse.parse!
+
+exit unless options[:title]
+DIRECTORY_NAME = File.join(OUTPUT_DIR, options[:title].gsub(/[ ':\/\\]+/, "_"))
+logger.info("Creating directory #{DIRECTORY_NAME}.")
+Dir.mkdir(DIRECTORY_NAME) unless Dir.exist?(DIRECTORY_NAME)
+logger.info("Outputting to #{DIRECTORY_NAME}")
+RakeMKV.config.destination = DIRECTORY_NAME
+
+logger.info("Beginning rip.")
+disc = options[:disc]
+title_id = options[:title_id]
+ripped_file = TranscodesLongestTitle.new(disc_device: disc, title_id: title_id).perform()
+logger.info("Finished rip. New file is #{ripped_file}.")
+`eject #{disc}`
+
+machine = options[:host]
+machine ||= MACHINES.sample
+
+if machine == 'localhost' || machine == "`hostname`.local"
+  logger.info("Storing locally.")
+  exit
+end
+
+logger.info("scp -r \"#{DIRECTORY_NAME}\" #{machine}:/home/adam/Videos")
+`scp -r "#{DIRECTORY_NAME}" #{machine}:/home/adam/Videos`
+logger.info("SCP finished.")
+`/home/adam/src/scripts/pushover.sh "Blu-Ray rip finished"`
