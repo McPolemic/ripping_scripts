@@ -1,4 +1,4 @@
-#!/usr/bin/ruby2.0
+#!/usr/bin/env ruby
 require_relative './transcode'
 require 'fileutils'
 
