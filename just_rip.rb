@@ -4,9 +4,7 @@ require "optparse"
 require "rakemkv"
 
 # Rips a DVD/Blu-Ray. Returns when done. No muss. No fuss.
-OUTPUT_DIR = '/home/adam/Videos/'
-machine = ARGV[1]
-MACHINES = ["linux2.local", "linux3.local", "puck.local"]
+OUTPUT_DIR = '/Videos/'
 
 STDOUT.sync = true
 logger = Logger.new(STDOUT)
@@ -56,11 +54,6 @@ optparse = OptionParser.new do |opts|
     options[:title_id] = num
   end
 
-  options[:host] = nil
-  opts.on("-m", "--machine MACHINE", "Send the rip to the target machine") do |host|
-    options[:host] = host
-  end
-
   opts.on( '-h', '--help', 'Display this screen' ) do
     puts opts
     exit
@@ -69,7 +62,11 @@ end
 
 optparse.parse!
 
-exit unless options[:title]
+unless options[:title]
+  puts "Requires title. See -h for more information"
+  exit
+end
+
 DIRECTORY_NAME = File.join(OUTPUT_DIR, options[:title].gsub(/[ ':\/\\]+/, "_"))
 logger.info("Creating directory #{DIRECTORY_NAME}.")
 Dir.mkdir(DIRECTORY_NAME) unless Dir.exist?(DIRECTORY_NAME)
@@ -81,17 +78,4 @@ disc = options[:disc]
 title_id = options[:title_id]
 ripped_file = TranscodesLongestTitle.new(disc_device: disc, title_id: title_id).perform()
 logger.info("Finished rip. New file is #{ripped_file}.")
-`eject #{disc}`
 
-machine = options[:host]
-machine ||= MACHINES.sample
-
-if machine == 'localhost' || machine == "`hostname`.local"
-  logger.info("Storing locally.")
-  exit
-end
-
-logger.info("scp -r \"#{DIRECTORY_NAME}\" #{machine}:/home/adam/Videos")
-`scp -r "#{DIRECTORY_NAME}" #{machine}:/home/adam/Videos`
-logger.info("SCP finished.")
-`/home/adam/src/scripts/pushover.sh "Blu-Ray rip finished"`
