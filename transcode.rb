@@ -2,7 +2,7 @@
 require "logger"
 
 def usage
-  puts 'rip_bluray.rb "Title in Quotes"'
+  puts 'transcode.rb "Title in Quotes"'
   exit
 end
 
@@ -26,8 +26,8 @@ end
 def main
   usage() if ARGV.count < 1 || ARGV.first == "-h" || ARGV.first == "--help"
 
-  output_dir = '/home/adam/Videos/'
-  conversion_dir = '/home/adam/Converted/'
+  output_dir = '/mkv/'
+  conversion_dir = '/videos/'
   title = ARGV.first
   directory_name = File.join(output_dir, title.gsub(/[ ':\/\\]+/, "_"))
 

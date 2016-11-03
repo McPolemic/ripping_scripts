@@ -9,8 +9,8 @@ end
 
 usage() if ARGV.count < 2
 
-source_dir = ARGV[0]
-conversion_dir = ARGV[1]
+source_dir = /mkv/
+conversion_dir = /videos/
 
 FileUtils.mkdir_p(conversion_dir)
 

@@ -4,7 +4,7 @@ require "optparse"
 require "rakemkv"
 
 # Rips a DVD/Blu-Ray. Returns when done. No muss. No fuss.
-OUTPUT_DIR = '/Videos/'
+OUTPUT_DIR = '/mkv/'
 
 STDOUT.sync = true
 logger = Logger.new(STDOUT)
