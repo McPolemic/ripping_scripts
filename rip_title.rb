@@ -37,7 +37,7 @@ end
 options = {}
 
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: ruby2.0 just_rip.rb [options]"
+  opts.banner = "Usage: #{$0} [options]"
 
   options[:disc] = "/dev/sr0"
   opts.on("-d", "--disc /dev/sr0", "Set the disc device") do |disc|
