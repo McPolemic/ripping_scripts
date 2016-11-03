@@ -25,9 +25,12 @@ class TranscodesLongestTitle
     titles = disc.titles
 
     if @title_id
+      logger.info("Ripping title #{@title_id}...")
       disc.transcode!(title_id: @title_id)
     else
-      disc.transcode!(title_id: titles.longest.id)
+      title = titles.longest
+      logger.info("Ripping title #{title.id}, length: #{title.duration}, #{title.chapter_count} chapters...")
+      disc.transcode!(title_id: title.id)
     end
 
     return find_newest_file(DIRECTORY_NAME)

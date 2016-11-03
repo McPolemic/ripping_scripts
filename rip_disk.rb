@@ -19,7 +19,8 @@ class TranscodesAllTitles
     titles = disc.titles
 
     titles.each do |title|
-      disc.transcode!(title_id: title)
+      logger.info("Ripping title #{title.id}, length: #{title.duration}, #{title.chapter_count} chapters...")
+      disc.transcode!(title_id: title.id)
     end
   end
 end
@@ -60,8 +61,7 @@ RakeMKV.config.destination = DIRECTORY_NAME
 
 logger.info("Beginning rip.")
 disc = options[:disc]
-title_id = options[:title_id]
-ripped_file = TranscodesAllTitles.new(disc_device: disc, title_id: title_id).perform()
+ripped_file = TranscodesAllTitles.new(disc_device: disc).perform()
 logger.info("Finished rip. The following files were created:")
 Dir.glob(File.join(DIRECTORY_NAME, '**')).each do |file|
   logger.info("* #{file}")
