@@ -15,9 +15,10 @@ def find_newest_file(directory)
 end
 
 class TranscodesLongestTitle
-  def initialize(disc_device: "/dev/sr0", title_id: nil)
+  def initialize(disc_device: "/dev/sr0", title_id: nil, logger:)
     @disc_device = disc_device
     @title_id = title_id
+    @logger = logger
   end
 
   def perform()
@@ -25,11 +26,11 @@ class TranscodesLongestTitle
     titles = disc.titles
 
     if @title_id
-      logger.info("Ripping title #{@title_id}...")
+      @logger.info("Ripping title #{@title_id}...")
       disc.transcode!(title_id: @title_id)
     else
       title = titles.longest
-      logger.info("Ripping title #{title.id}, length: #{title.duration}, #{title.chapter_count} chapters...")
+      @logger.info("Ripping title #{title.id}, #{title.chapter_count} chapters...")
       disc.transcode!(title_id: title.id)
     end
 
@@ -79,6 +80,6 @@ RakeMKV.config.destination = DIRECTORY_NAME
 logger.info("Beginning rip.")
 disc = options[:disc]
 title_id = options[:title_id]
-ripped_file = TranscodesLongestTitle.new(disc_device: disc, title_id: title_id).perform()
+ripped_file = TranscodesLongestTitle.new(disc_device: disc, title_id: title_id, logger: logger).perform()
 logger.info("Finished rip. New file is #{ripped_file}.")
 

@@ -10,8 +10,9 @@ STDOUT.sync = true
 logger = Logger.new(STDOUT)
 
 class TranscodesAllTitles
-  def initialize(disc_device: "/dev/sr0")
+  def initialize(disc_device: "/dev/sr0", logger:)
     @disc_device = disc_device
+    @logger = logger
   end
 
   def perform()
@@ -19,7 +20,7 @@ class TranscodesAllTitles
     titles = disc.titles
 
     titles.each do |title|
-      logger.info("Ripping title #{title.id}, length: #{title.duration}, #{title.chapter_count} chapters...")
+      @logger.info("Ripping title #{title.id}, #{title.chapter_count} chapters...")
       disc.transcode!(title_id: title.id)
     end
   end
@@ -61,7 +62,7 @@ RakeMKV.config.destination = DIRECTORY_NAME
 
 logger.info("Beginning rip.")
 disc = options[:disc]
-ripped_file = TranscodesAllTitles.new(disc_device: disc).perform()
+ripped_file = TranscodesAllTitles.new(disc_device: disc, logger: logger).perform()
 logger.info("Finished rip. The following files were created:")
 Dir.glob(File.join(DIRECTORY_NAME, '**')).each do |file|
   logger.info("* #{file}")
