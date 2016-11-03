@@ -3,20 +3,22 @@ require_relative './transcode'
 require 'fileutils'
 
 def usage
-  puts 'transcode_dir.rb /path/to/input/dir/ /path/to/output/dir/'
+  puts 'transcode_dir.rb title'
   exit
 end
 
-usage() if ARGV.count < 2
+usage() if ARGV.count < 1
 
-source_dir = /mkv/
-conversion_dir = /videos/
+SOURCE_DIR = /mkv/
+CONVERSION_DIR = /videos/
 
-FileUtils.mkdir_p(conversion_dir)
+title = ARGV.first.gsub(/[ ':\/\\]+/, "_")
+output_dir = File.join(CONVERSION_DIR, title)
+FileUtils.mkdir_p(output_dir)
 
-input_files = Dir.glob(File.join(source_dir, "**"))
+input_files = Dir.glob(File.join(SOURCE_DIR, title, "**"))
 input_files.each do |input|
-  output = input.gsub(source_dir, conversion_dir).gsub('.mkv', '.mp4')
+  output = input.gsub(SOURCE_DIR, CONVERSION_DIR).gsub('.mkv', '.mp4')
   MkvToMp4.new(input, output).perform
 end
 
