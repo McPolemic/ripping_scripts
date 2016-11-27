@@ -9,8 +9,8 @@ end
 
 usage() if ARGV.count < 1
 
-SOURCE_DIR = /mkv/
-CONVERSION_DIR = /videos/
+SOURCE_DIR = '/mkv/'
+CONVERSION_DIR = '/videos/'
 
 title = ARGV.first.gsub(/[ ':\/\\]+/, "_")
 output_dir = File.join(CONVERSION_DIR, title)
