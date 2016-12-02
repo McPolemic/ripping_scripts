@@ -20,3 +20,4 @@ RUN bundle install
 ADD . /app
 VOLUME /mkv
 VOLUME /videos
+CMD ./rip_disk.rb && ./transcode_dir.rb "$RIP_TITLE"

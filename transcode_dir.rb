@@ -1,6 +1,17 @@
 #!/usr/bin/env ruby
-require_relative './transcode'
 require 'fileutils'
+
+class MkvToMp4
+  def initialize(input, output)
+    @input = input
+    @output = output
+  end
+
+  def perform()
+    `HandBrakeCLI --preset "High Profile" -i "#{@input}" -o "#{@output}"`
+    {input_file: @input, output_file: @output}
+  end
+end
 
 def usage
   puts 'transcode_dir.rb title'
