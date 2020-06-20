@@ -14,7 +14,7 @@ class Ripper
 
   def initialize(disk_device: "/dev/sr0", title_id: nil, logger:)
     @disk = RakeMKV::Disc.new(disk_device)
-    @title_id = title_id.to_i
+    @title_id = title_id
     @logger = logger
   end
 
