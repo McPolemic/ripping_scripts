@@ -13,7 +13,7 @@ class Ripper
   attr_reader :disk
 
   def initialize(disk_device: "/dev/sr0", title_id: nil, logger:)
-    @disk = RakeMKV::Disc.new(disk_device)
+    @disk = RakeMKV::Disc.new(location: disk_device)
     @title_id = title_id
     @logger = logger
   end
