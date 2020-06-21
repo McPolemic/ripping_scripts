@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y software-properties-common && add-apt-r
 ADD makemkv_settings.conf /root/.MakeMKV/settings.conf
 RUN apt-get update && apt-get install -y makemkv-bin makemkv-oss
 
-RUN apt-get install -y makemkv-bin ruby handbrake-cli
+RUN apt-get install -y makemkv-bin ruby ruby-dev build-essential handbrake-cli
 
 ADD Gemfile /app/
 RUN gem install bundler
