@@ -1,6 +1,6 @@
 # Installation
 
-`docker build -t ripper`
+`docker build -t ripper .`
 
 # Usage
 ```
