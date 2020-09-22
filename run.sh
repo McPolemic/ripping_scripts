@@ -10,8 +10,7 @@ if [ -z "$RIP_TITLE" ]; then
 		                      default: all titles
     * RIP_DEVICE          Which device to read from when ripping.
                           Useful for multiple disk drives.
-    * TRANSCODE_PRESET    Which device to read from when ripping.
-                          Useful for multiple disk drives.
+    * TRANSCODE_PRESET    Which preset should to use from HandBrakeCLI.
 
     Creates a volume '/videos' where it stores videos. Either use Docker to
     bind that to a local directory (e.g. '-v ~/Videos:/videos') or transfer
